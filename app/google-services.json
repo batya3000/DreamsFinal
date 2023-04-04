@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "573625645298",
+    "project_id": "dreams-ca810",
+    "storage_bucket": "dreams-ca810.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:573625645298:android:e61a683d00bf95d314b86b",
+        "android_client_info": {
+          "package_name": "com.android.batya.dreams"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "573625645298-84pojduki63cslpfjei2tgd6a0do4de8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBQAMe9QLlHvuodxYFHlH9TU5OBh4_OI8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "573625645298-84pojduki63cslpfjei2tgd6a0do4de8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
