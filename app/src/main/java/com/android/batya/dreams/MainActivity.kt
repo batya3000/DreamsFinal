@@ -42,7 +42,6 @@ fun DreamsApp() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             DreamNavigation()
-
         }
     }
 }

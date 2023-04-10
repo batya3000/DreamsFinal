@@ -1,7 +1,6 @@
 package com.android.batya.dreams.screens.home
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
@@ -9,11 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -42,14 +38,28 @@ import com.android.batya.dreams.ui.theme.InactiveColor
 fun HomeScreen(navController: NavHostController = rememberNavController()) {
     var isFabInvisible by rememberSaveable { mutableStateOf(false) }
 
-    val editDreamScreens = listOf(
+    val otherScreens = listOf(
+        DreamScreens.DreamEdit,
         DreamScreens.General,
         DreamScreens.Mood,
-        DreamScreens.Lucid
+        DreamScreens.Lucid,
+
+        DreamScreens.Details,
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-    isFabInvisible = editDreamScreens.any { it.route == navBackStackEntry?.destination?.route}
+    isFabInvisible = otherScreens.any { it.route == navBackStackEntry?.destination?.route }
+    MainScaffold(isFabInvisible, navController)
+
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@Composable
+fun MainScaffold(
+    isFabInvisible: Boolean,
+    navController: NavHostController,
+) {
     Scaffold(
         bottomBar = { BottomBarWithFab(navController = navController) },
         floatingActionButtonPosition = FabPosition.Center,
@@ -59,7 +69,7 @@ fun HomeScreen(navController: NavHostController = rememberNavController()) {
         Box(modifier = Modifier
             .fillMaxSize()
             .paint(
-                painter = painterResource(id = R.drawable.img_14),
+                painter = painterResource(id = R.drawable.img_4),
                 contentScale = ContentScale.Crop
             )
         ) {
@@ -74,7 +84,7 @@ fun BottomBarWithFab(navController: NavHostController) {
         DreamScreens.Journal,
         DreamScreens.Statistics,
         DreamScreens.Search,
-        DreamScreens.Profile
+        DreamScreens.Profile,
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -137,10 +147,10 @@ fun NewDreamFloatingActionButton(navController: NavHostController, isFabInvisibl
             shape = CircleShape,
             onClick = {
                 navController.navigate(
-                    DreamScreens.General
-                        .passDreamId("123test")
+                    DreamScreens.DreamEdit.route
+                        //.passDreamId("1")
                 ) {
-                    popUpTo(navController.currentDestination!!.id) {
+                    popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
                     }
                     launchSingleTop = true

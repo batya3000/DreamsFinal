@@ -6,38 +6,29 @@ import com.android.batya.dreams.navigation.DREAM_ID_ARGUMENT_KEY
 import com.android.batya.dreams.navigation.DreamScreens
 
 import com.android.batya.dreams.navigation.Graph
-import com.android.batya.dreams.screens.edit.DreamGeneralScreen
-import com.android.batya.dreams.screens.edit.DreamLucidScreen
-import com.android.batya.dreams.screens.edit.DreamMoodScreen
+import com.android.batya.dreams.screens.details.DreamDetailsScreen
+import com.android.batya.dreams.screens.edit.DreamEditScreen
 
 
 fun NavGraphBuilder.editDreamNavGraph(navController: NavHostController) {
     navigation(
         route = Graph.EDIT_DREAM,
-        startDestination = DreamScreens.General.route
+        startDestination = DreamScreens.DreamEdit.route
     ) {
         composable(
-            route = DreamScreens.General.route,
+            route = DreamScreens.DreamEdit.route,
             arguments = listOf(
                 navArgument(DREAM_ID_ARGUMENT_KEY) {
                     type = NavType.StringType
-                    defaultValue = "default"
+                    defaultValue = ""
                 }
             )
         ) {
-            DreamGeneralScreen(
+            DreamEditScreen(
                 navController = navController,
                 dreamId = it.arguments?.getString(DREAM_ID_ARGUMENT_KEY).toString()
             )
         }
-
-        composable(route = DreamScreens.Mood.route) {
-            DreamMoodScreen(navController = navController)
-        }
-        composable(route = DreamScreens.Lucid.route) {
-            DreamLucidScreen(navController = navController)
-        }
     }
 }
-
 

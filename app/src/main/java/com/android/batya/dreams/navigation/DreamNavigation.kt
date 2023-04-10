@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.android.batya.dreams.navigation.graphs.authNavGraph
 import com.android.batya.dreams.navigation.graphs.editDreamNavGraph
+import com.android.batya.dreams.screens.edit.DreamEditScreen
 import com.android.batya.dreams.screens.home.HomeScreen
 
 
@@ -16,12 +17,11 @@ fun DreamNavigation() {
     NavHost(
         navController = navController,
         route = Graph.ROOT,
-        startDestination = Graph.HOME
+        startDestination = Graph.AUTH
     ) {
         authNavGraph(navController)
         composable(route = Graph.HOME) {
             HomeScreen()
         }
-        editDreamNavGraph(navController)
     }
 }

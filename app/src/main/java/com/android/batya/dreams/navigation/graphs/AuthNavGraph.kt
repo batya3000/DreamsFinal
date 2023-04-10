@@ -1,6 +1,7 @@
 package com.android.batya.dreams.navigation.graphs
 
 import android.widget.Toast
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
