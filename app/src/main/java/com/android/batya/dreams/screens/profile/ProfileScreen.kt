@@ -1,34 +1,42 @@
 package com.android.batya.dreams.screens.profile
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import com.android.batya.dreams.R
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.android.batya.dreams.components.TranslucentButton
+import com.android.batya.dreams.navigation.DreamScreens
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun ProfileScreen(
-//    name: String,
-//    onClick: () -> Unit
+    navController: NavController,
+
 ) {
-    Box(
+    Column(
         modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+            .fillMaxSize()
+            .padding(
+                start = 20.dp,
+                end = 20.dp,
+                top = 50.dp,
+                bottom = 40.dp
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
-        Text(
-            modifier = Modifier.clickable { },
-            text = "Profile",
-            fontSize = MaterialTheme.typography.h3.fontSize,
-            fontWeight = FontWeight.Bold
-        )
+        TranslucentButton(
+            text = "Logout from Google"
+        ) {
+            Firebase.auth.signOut()
+            navController.navigate(DreamScreens.SignIn.route) {
+                popUpTo(navController.graph.id) {
+                    inclusive = true
+                }
+            }
+        }
     }
 }

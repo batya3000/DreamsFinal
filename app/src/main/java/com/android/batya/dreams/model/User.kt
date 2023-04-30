@@ -5,7 +5,7 @@ import java.util.*
 
 data class User(
     val id: String? = null,
-    val email: String? = null,
     val displayName: String? = null,
+    val email: String? = null,
     var dreams: Map<String?, Dream?> = mapOf()
 )

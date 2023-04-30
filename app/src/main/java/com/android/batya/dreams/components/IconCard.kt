@@ -52,6 +52,7 @@ fun IconCard(
                 color = Color.White,
                 fontWeight = FontWeight.Normal
             )
+
             Image(
                 modifier = Modifier.size(iconSize),
                 painter = painterResource(id = icon),

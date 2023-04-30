@@ -21,11 +21,12 @@ import com.android.batya.dreams.ui.theme.BorderColor
 import com.android.batya.dreams.ui.theme.CardBackgroundColor
 import com.android.batya.dreams.ui.theme.DateTimeTextColor
 import com.android.batya.dreams.R
-import com.android.batya.dreams.utils.getShorFormattedDate
-import kotlin.random.Random
+import com.android.batya.dreams.model.Lucidity
+import com.android.batya.dreams.model.Mood
+import com.android.batya.dreams.utils.getShortFormattedDate
 
 @Composable
-fun DreamItemNew(
+fun DreamItem(
     dream: Dream,
     onClick: () -> Unit
 ) {
@@ -64,7 +65,7 @@ fun DreamItemNew(
                 Text(
                     modifier = Modifier
                         .width(165.dp),
-                    text = dream.id,
+                    text = dream.title,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -73,35 +74,39 @@ fun DreamItemNew(
                 )
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                        if(Random.nextInt(10) > 2) {
+                        if(dream.mood != Mood.NOT_SELECTED) {
                             Image(
                                 modifier = Modifier.size(16.dp),
                                 painter = painterResource(
                                     id =
-                                    when(Random.nextInt(4)) {
-                                        0 -> { R.drawable.ic_mood_horror }
-                                        1 -> { R.drawable.ic_mood_bad }
-                                        2 -> { R.drawable.ic_mood_normal }
-                                        3 -> { R.drawable.ic_mood_good }
-                                        else -> { R.drawable.ic_mood_excellent }
+                                    when(dream.mood) {
+                                        Mood.HORROR -> { R.drawable.ic_mood_horror }
+                                        Mood.BAD -> { R.drawable.ic_mood_bad }
+                                        Mood.NORMAL -> { R.drawable.ic_mood_normal }
+                                        Mood.GOOD -> { R.drawable.ic_mood_good }
+                                        Mood.BREATHTAKING -> { R.drawable.ic_mood_breathtaking}
+                                        else -> { R.drawable.ic_mood_bored }
                                     }
                                 ),
                                 contentDescription = "Mood Icon",
                             )
                         }
 
-                        if(Random.nextInt(2) == 0) {
+                        if(dream.lucidity != Lucidity.NOT_SELECTED) {
                             Spacer(modifier = Modifier.width(4.dp))
                             Image(
                                 modifier = Modifier.size(15.dp),
-                                painter = painterResource(id = R.drawable.ic_lucid),
+                                painter = painterResource(
+                                    id = if (dream.lucidity == Lucidity.LUCID) R.drawable.ic_lucid
+                                        else R.drawable.ic_non_lucid
+                                ),
                                 contentDescription = "Mood Icon",
                             )
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             modifier = Modifier,
-                            text = getShorFormattedDate(dream.date),
+                            text = getShortFormattedDate(dream.date),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = DateTimeTextColor

@@ -1,5 +1,6 @@
 package com.android.batya.dreams.screens.details
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,28 +21,37 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.android.batya.dreams.components.ChipGroup
 import com.android.batya.dreams.components.IconCard
-import com.android.batya.dreams.repository.DreamRepository
 import com.android.batya.dreams.R
 import com.android.batya.dreams.model.Dream
+import com.android.batya.dreams.model.Lucidity
+import com.android.batya.dreams.model.Mood
 import com.android.batya.dreams.navigation.DreamScreens
-import com.android.batya.dreams.ui.theme.BorderColor
 import com.android.batya.dreams.ui.theme.CardDarkerBackgroundColor
 import com.android.batya.dreams.utils.getFormattedDate
 import com.android.batya.dreams.utils.getFormattedTime
 
 @Composable
-fun DreamDetailsScreen(navController: NavHostController, dreamId: String) {
+fun DreamDetailsScreen(
+    navController: NavHostController,
+    dreamId: String,
+    viewModel: DreamDetailsViewModel = hiltViewModel(),
+) {
     val scrollableState = rememberScrollState()
     val context = LocalContext.current
     var menuExpanded by remember { mutableStateOf(false) }
-    val dream = DreamRepository().getDreams()[dreamId.toInt()]
 
+    var dream = Dream()
 
+    if(viewModel.dreamOrException.value.data != null && dreamId != "") {
+        dream = viewModel.dreamOrException.value.data!!
+    }
 
+    Log.d("TAG", "DreamDetailsScreen: get $dreamId = [$dream]")
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -103,9 +113,9 @@ fun DreamDetailsScreen(navController: NavHostController, dreamId: String) {
                                 onClick = {
                                     Toast.makeText(context, "Edit", Toast.LENGTH_SHORT).show()
                                     menuExpanded = false
-
+                                    Log.d("TAG", "OPENING DREAM: ${dream.id}")
                                     navController.navigate(
-                                        DreamScreens.DreamEdit.passDreamId(dream.id)
+                                        DreamScreens.DreamEdit.passArguments(id = dream.id, isOpenedFromDetails = true)
                                     ) {
                                         popUpTo(navController.graph.findStartDestination().id) {
                                             saveState = true
@@ -127,6 +137,14 @@ fun DreamDetailsScreen(navController: NavHostController, dreamId: String) {
                             DropdownMenuItem(
                                 onClick = {
                                     Toast.makeText(context, "Delete", Toast.LENGTH_SHORT).show()
+                                    viewModel.deleteDreamById(dream.id)
+
+                                    navController.navigate(DreamScreens.Journal.route) {
+                                        popUpTo(navController.graph.id) {
+                                            inclusive = true
+                                        }
+                                    }
+
                                     menuExpanded = false
                                 }
                             ) {
@@ -209,20 +227,31 @@ fun DreamDetailsScreen(navController: NavHostController, dreamId: String) {
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                 }
-
-                IconCard(
-                    title = "Mood",
-                    icon = R.drawable.ic_mood_bad,
-                    iconSize = 23.dp,
-                    cardBackgroundColor = CardDarkerBackgroundColor
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                IconCard(
-                    title = "Lucidity",
-                    icon = R.drawable.ic_non_lucid,
-                    iconSize = 21.dp,
-                    cardBackgroundColor = CardDarkerBackgroundColor
-                )
+                if(dream.mood != Mood.NOT_SELECTED) {
+                    IconCard(
+                        title = "Mood",
+                        icon = when(dream.mood) {
+                            Mood.HORROR -> { R.drawable.ic_mood_horror }
+                            Mood.BAD -> { R.drawable.ic_mood_bad }
+                            Mood.NORMAL -> { R.drawable.ic_mood_normal }
+                            Mood.GOOD -> { R.drawable.ic_mood_good }
+                            Mood.BREATHTAKING -> { R.drawable.ic_mood_breathtaking}
+                            else -> { R.drawable.ic_mood_bored }
+                        },
+                        iconSize = 23.dp,
+                        cardBackgroundColor = CardDarkerBackgroundColor
+                    )
+                }
+                if(dream.lucidity != Lucidity.NOT_SELECTED) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    IconCard(
+                        title = "Lucidity",
+                        icon = if (dream.lucidity == Lucidity.LUCID) R.drawable.ic_lucid
+                                else R.drawable.ic_non_lucid,
+                        iconSize = 21.dp,
+                        cardBackgroundColor = CardDarkerBackgroundColor
+                    )
+                }
             }
         }
     }

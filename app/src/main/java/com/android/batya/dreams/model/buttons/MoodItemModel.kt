@@ -1,7 +1,7 @@
 package com.android.batya.dreams.model.buttons
 
 
-data class RadioButtonItemModel(
+data class MoodItemModel(
     val title: String,
-    val icon: Int
+    val icon: Int,
 )

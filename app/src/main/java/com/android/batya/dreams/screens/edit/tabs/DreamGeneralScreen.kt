@@ -6,31 +6,32 @@ import android.util.Log
 import android.widget.DatePicker
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavController
+import com.android.batya.dreams.R
 import com.android.batya.dreams.components.ChipGroup
 import com.android.batya.dreams.components.FieldLabel
 import com.android.batya.dreams.components.InputField
+import com.android.batya.dreams.data.DataOrException
 import com.android.batya.dreams.model.Dream
 import com.android.batya.dreams.model.Tag
-import com.android.batya.dreams.repository.DreamRepository
+import com.android.batya.dreams.navigation.DreamScreens
 import com.android.batya.dreams.utils.getFormattedDate
 import com.android.batya.dreams.utils.getFormattedTime
-import com.android.batya.dreams.utils.parseDateFromString
-import com.android.batya.dreams.utils.parseTimeFromString
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 @Composable
-fun DreamGeneralScreen(dream: Dream) {
-
+fun GeneralScreenContent(dream: Dream, viewModel: EditDreamViewModel) {
     val titleValue = remember { mutableStateOf(dream.title) }
     val descriptionValue = remember { mutableStateOf(dream.description) }
     val tagValue = remember { mutableStateOf("") }
@@ -40,21 +41,22 @@ fun DreamGeneralScreen(dream: Dream) {
     val tags = remember { mutableStateOf(dream.tags) }
 
     val context = LocalContext.current
-
     val datePicker = DatePickerDialog(
         context,
         { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-            dateValue.value = getFormattedDate(selectedYear, selectedMonth, selectedDayOfMonth)
-            dream.date = parseDateFromString(dateValue.value)
-        }, dream.date.year, dream.date.monthValue, dream.date.dayOfMonth
+            dream.date = LocalDate.of(selectedYear, selectedMonth + 1, selectedDayOfMonth).toEpochDay()
+            viewModel.updateDream(dream)
+            dateValue.value = getFormattedDate(dream.date)
+        }, LocalDate.ofEpochDay(dream.date).year, LocalDate.ofEpochDay(dream.date).monthValue - 1, LocalDate.ofEpochDay(dream.date).dayOfMonth
     )
 
     val timePicker = TimePickerDialog(
         context,
         {_, selectedHour : Int, selectedMinute: Int ->
-            timeValue.value = getFormattedTime(selectedHour, selectedMinute)
-            dream.time = parseTimeFromString(timeValue.value)
-        }, dream.time.hour, dream.time.minute, true
+            dream.time = LocalTime.of(selectedHour, selectedMinute).toNanoOfDay()
+            viewModel.updateDream(dream)
+            timeValue.value = getFormattedTime(dream.time)
+        }, LocalTime.ofNanoOfDay(dream.time).hour, LocalTime.ofNanoOfDay(dream.time).minute, true
     )
 
     Box(
@@ -73,13 +75,12 @@ fun DreamGeneralScreen(dream: Dream) {
                     FieldLabel(
                         modifier = Modifier
                             .padding(start = 4.dp, bottom = 8.dp),
-                        text = "Дата",
+                        text = stringResource(R.string.edit_dream_date),
                     )
                     InputField(
                         modifier = Modifier
                             .fillMaxWidth(0.65f),
                         valueState = dateValue,
-                        placeholder = "05 апреля 2023 г.",
                         isSingleLine = true,
                         enabled = false,
                     ) { // onCliсk
@@ -91,13 +92,12 @@ fun DreamGeneralScreen(dream: Dream) {
                     FieldLabel(
                         modifier = Modifier
                             .padding(start = 4.dp, bottom = 8.dp),
-                        text = "Время",
+                        text = stringResource(R.string.edit_dream_time),
                     )
                     InputField(
                         modifier = Modifier
                             .fillMaxWidth(1f),
                         valueState = timeValue,
-                        placeholder = "11:48",
                         isSingleLine = true,
                         enabled = false,
                     ) { // onCliсk
@@ -111,14 +111,20 @@ fun DreamGeneralScreen(dream: Dream) {
             FieldLabel(
                 modifier = Modifier
                     .padding(start = 4.dp, bottom = 8.dp),
-                text = "Название",
+                text = stringResource(R.string.edit_dream_title),
             )
             InputField(
                 modifier = Modifier
                     .fillMaxWidth(),
                 valueState = titleValue,
-                placeholder = "Название сна",
-                enabled = true
+                placeholder = stringResource(R.string.edit_dream_title_placeholder),
+                enabled = true,
+                isSingleLine = false,
+                onValueChanged = { title ->
+                    dream.title = title
+                    viewModel.updateDream(dream)
+                },
+
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -126,7 +132,7 @@ fun DreamGeneralScreen(dream: Dream) {
             FieldLabel(
                 modifier = Modifier
                     .padding(start = 4.dp, bottom = 8.dp),
-                text = "Содержание",
+                text = stringResource(R.string.edit_dream_description),
             )
             InputField(
                 modifier = Modifier
@@ -134,18 +140,24 @@ fun DreamGeneralScreen(dream: Dream) {
                     .height(170.dp)
                     .defaultMinSize(minHeight = 170.dp),
                 valueState = descriptionValue,
-                placeholder = "Подробное описание сна",
+                placeholder = stringResource(R.string.edit_dream_description_placeholder),
                 enabled = true,
                 isSingleLine = false,
-                onAction = KeyboardActions { }
+                onAction = KeyboardActions { },
+                onValueChanged = { description ->
+                    dream.description = description
+                    viewModel.updateDream(dream)
+                }
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
             ChipGroup(tags = tags.value) { tag ->
-                Log.d("TAG", "tags before delete: ${tags.value}")
+                //Log.d("TAG", "tags before delete: ${tags.value}")
                 tags.value -= tag
-                Log.d("TAG", "tags after delete: ${tags.value}")
+                dream.tags -= tag
+                viewModel.updateDream(dream)
+                //Log.d("TAG", "tags after delete: ${tags.value}")
             }
             if ( tags.value != emptyList<Tag>()) {
                 Spacer(modifier = Modifier.height(12.dp))
@@ -153,7 +165,7 @@ fun DreamGeneralScreen(dream: Dream) {
             FieldLabel(
                 modifier = Modifier
                     .padding(start = 4.dp, bottom = 8.dp),
-                text = "Добавить тег",
+                text = stringResource(R.string.edit_dream_add_tag),
             )
 
             val isTagValid = remember(tagValue.value) {
@@ -164,22 +176,18 @@ fun DreamGeneralScreen(dream: Dream) {
                 modifier = Modifier
                     .fillMaxWidth(),
                 valueState = tagValue,
-                placeholder = "Назовите новый тег",
+                placeholder = stringResource(R.string.edit_dream_add_tag_placeholder),
                 enabled = true,
                 onAction = KeyboardActions {
                     if (!isTagValid) return@KeyboardActions
                     tags.value += Tag(tagValue.value.trim())
+                    dream.tags += Tag(tagValue.value.trim())
+                    viewModel.updateDream(dream)
                     tagValue.value = ""
                 }
             )
         }
     }
-
-    dream.title = titleValue.value
-    dream.description = descriptionValue.value
-    dream.tags = tags.value
-        //Log.d("TAG", "new tags: ${tags.value} and ${dream.tags}")
-
 }
 
 

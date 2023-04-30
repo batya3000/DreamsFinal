@@ -1,3 +1,37 @@
 <resources>
     <string name="app_name">Dreams</string>
+    <string name="web_client_id">573625645298-9i61h5dkdu2q5ktcf0k950jn3d9r7vji.apps.googleusercontent.com</string>
+    <string name="edit_dream_date">Date</string>
+    <string name="edit_dream_time">Time</string>
+    <string name="edit_dream_title">Title</string>
+    <string name="edit_dream_description">Description</string>
+    <string name="edit_dream_description_placeholder">Detailed description of the dream</string>
+    <string name="edit_dream_title_placeholder">Name of the dream</string>
+    <string name="edit_dream_add_tag">Add tag</string>
+    <string name="edit_dream_add_tag_placeholder">Name the new tag</string>
+    <string name="mood_title_breathtaking">Breathtaking</string>
+    <string name="mood_title_good">Good</string>
+    <string name="mood_title_normal">Normal</string>
+    <string name="mood_title_bad">Bad</string>
+    <string name="mood_title_horror">Horror</string>
+    <string name="mood_title_bored">Bored</string>
+    <string name="lucid_title">Lucid</string>
+    <string name="not_lucid_title">Not lucid</string>
+    <string name="edit_dream_mood_question">What was the mood of your dream?</string>
+    <string name="title_not_selected">Not selected</string>
+    <string name="edit_dream_lucid_question">Was the dream lucid?</string>
+    <string name="edit_dream_lucid_explanation">A lucid dream means you recognized that you are in the dream</string>
+    <string name="save_button">SAVE</string>
+    <string name="bottom_bar_journal">Journal</string>
+    <string name="bottom_bar_stats">Stats</string>
+    <string name="bottom_bar_search">Search</string>
+    <string name="bottom_bar_profile">Profile</string>
+    <string name="journal_no_dreams">You don\'t have dreams yet!\n Add the first with the button below.</string>
+    <string name="edit_dream_not_lucid_title">Not lucid</string>
+    <string name="edit_dream_lucid_title">Lucid</string>
+    <string name="search_no_dreams_date">No dreams recorded for this day</string>
+    <string name="search_no_dreams_mood">No dreams recorded for this mood</string>
+    <string name="search_no_dreams_text">No dreams recorded for this text</string>
+    <string name="search_no_dreams_lucidity">No dreams recorded for this filter</string>
+
 </resources>

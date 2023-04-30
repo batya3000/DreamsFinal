@@ -1,4 +1,4 @@
-package com.android.batya.dreams.screens.edit
+package com.android.batya.dreams.screens.details
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -16,15 +16,18 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class EditDreamViewModel @Inject constructor(
+class DreamDetailsViewModel @Inject constructor(
     private val repository: DreamRepository,
     savedStateHandle: SavedStateHandle
     ) : ViewModel() {
     val dreamOrException: MutableState<DataOrException<Dream, Boolean, Exception>>
             = mutableStateOf(DataOrException(Dream(), true,Exception("")))
     private val dreamId = savedStateHandle.get<String>(DREAM_ID_ARGUMENT_KEY)
+
+
     init {
         getDreamById(dreamId!!)
+        //Log.d("TAG", "dreamid: $dreamId")
     }
 
     private fun getDreamById(dreamId: String) {
@@ -35,9 +38,6 @@ class EditDreamViewModel @Inject constructor(
         }
     }
 
-    fun updateDream(dream: Dream) = viewModelScope.launch {
-        repository.updateDream(dream)
-    }
     fun deleteDreamById(dreamId: String) = viewModelScope.launch {
         repository.deleteDreamById(dreamId)
     }

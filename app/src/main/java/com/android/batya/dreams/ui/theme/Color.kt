@@ -15,8 +15,9 @@ val FabBackgroundColor = Color(0xFF1284FD)
 val CardBackgroundColor = Color(0x2600AFFF)
 val CardDarkerBackgroundColor = Color(0x3323B9FF)
 
-//val CardLucidBackgroundColor = Color(0x33005075)
-//val CardNonLucidBackgroundColor = Color(0x331CECFF)
+val UnselectedFilterChipBackgroundColor = Color(0x3300AFFF)
+val SelectedFilterChipBackgroundColor = Color(0xFF00AFFF)
+
 val ChipBackgroundColor = Color(0xFF00CCFF)
 
 val InputFieldBackgroundColor = Color(0x2600AFFF)

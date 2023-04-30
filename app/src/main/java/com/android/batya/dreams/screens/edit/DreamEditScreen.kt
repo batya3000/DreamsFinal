@@ -1,5 +1,6 @@
 package com.android.batya.dreams.screens.edit
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -15,33 +16,126 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.android.batya.dreams.navigation.DreamScreens
-import com.android.batya.dreams.ui.theme.TabRowSelectedBackgroundColor
-import com.android.batya.dreams.ui.theme.TabRowUnselectedBackgroundColor
-import com.android.batya.dreams.ui.theme.TabUnselectedIconColor
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.android.batya.dreams.data.DataOrException
 import com.android.batya.dreams.model.Dream
-import com.android.batya.dreams.repository.DreamRepository
+import com.android.batya.dreams.ui.theme.*
+
+
+@Composable
+fun DreamEditScreen(
+    navController: NavHostController,
+    viewModel: EditDreamViewModel = hiltViewModel(),
+    dreamId: String = "",
+    isOpenedFromDetails: Boolean = false,
+
+    ) {
+
+    var alertDialogOpened by remember {
+        mutableStateOf(false)
+    }
+
+    BackHandler {
+        alertDialogOpened = true
+    }
+
+    if (alertDialogOpened) {
+        AlertDialog(
+            onDismissRequest = {
+                alertDialogOpened = false
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        navController.navigate(DreamScreens.Journal.route) {
+                            popUpTo(navController.graph.id) {
+                                inclusive = true
+                            }
+                        }
+                        if (!isOpenedFromDetails) {
+                            viewModel.deleteDreamById(dreamId)
+                        }
+
+
+                        alertDialogOpened = false
+                    }
+                ) {
+                    Text(text = "Discard", color = Color.White)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        // close the dialog
+                        alertDialogOpened = false
+                    }
+                ) {
+                    Text(text = "Cancel", color = Color.White)
+                }
+            },
+            text = {
+                Text(
+                    text = "Discard unsaved changes and quit?",
+                    color = DateTimeTextColor,
+                    fontSize = 13.sp
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp),
+            shape = RoundedCornerShape(8.dp),
+            backgroundColor = BottomBarBackgroundColor
+        )
+    }
+
+
+
+    val dreamInfo = produceState(initialValue = DataOrException(data = Dream(),
+        true, Exception("")) ){
+        value = viewModel.dreamOrException.value
+    }.value
+
+    if (dreamInfo.loading == true) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                text = "Loading...",
+                color = Color.White
+            )
+        }
+        dreamInfo.loading = false
+    } else {
+        EditDreamTabs(dream = viewModel.dreamOrException.value.data!!, viewModel = viewModel) {
+            navController.navigate(DreamScreens.Journal.route) {
+                popUpTo(navController.graph.id) {
+                    inclusive = true
+                }
+            }
+        }
+    }
+
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DreamEditScreen(navController: NavHostController, dreamId: String) {
+fun EditDreamTabs(
+    dream: Dream,
+    viewModel: EditDreamViewModel,
+    onSave: () -> Unit
+) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
     val editPages = listOf(DreamScreens.General, DreamScreens.Mood, DreamScreens.Lucid)
-    val dream by remember {
-        mutableStateOf(
-            if (dreamId != "") DreamRepository().getDreams()[dreamId.toInt()]
-            else Dream()
-        )
-    }
-    //val dream: Dream
-    //if (dreamId != "") dream = DreamRepository().getDreams()[dreamId.toInt()]
-    //else dream = Dream()
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -110,13 +204,15 @@ fun DreamEditScreen(navController: NavHostController, dreamId: String) {
             ) {
                 when(page) {
                     0 -> {
-                        DreamGeneralScreen(dream)
+                        GeneralScreenContent(dream = dream, viewModel = viewModel)
                     }
                     1 -> {
-                        DreamMoodScreen(dream)
+                        MoodScreenContent(dream = dream, viewModel = viewModel)
                     }
                     2 -> {
-                        DreamLucidScreen(navController, dream)
+                        LucidScreenContent(dream = dream, viewModel = viewModel) { // onSave
+                            onSave()
+                        }
                     }
                 }
             }

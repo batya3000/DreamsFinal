@@ -1,64 +1,101 @@
 package com.android.batya.dreams.repository
 
+import android.util.Log
+import com.android.batya.dreams.data.DataOrException
 import com.android.batya.dreams.model.Dream
-import com.android.batya.dreams.model.Tag
-import java.util.*
-import kotlin.random.Random
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
+import kotlinx.coroutines.tasks.await
 
 class DreamRepository {
-    var counter = 0;
-    fun generateDream(): Dream {
-        val words = listOf("сон", "и", "он", "пришёл", "на", "построить", "я", "пошёл", "слово", "а", "стол", "красный", "зеленый", "синий", "желтый",
-            "книга", "мышь", "клавиатура", "монитор", "телефон", "часы", "дверь", "окно", "стул", "столик",
-            "банан", "яблоко", "апельсин", "груша", "слива", "виноград", "арбуз", "дыня",
-            "кот", "собака", "хомяк", "рыбка",
-            "домашнее животное","птица","насекомое","рыба","зверь","пресмыкающееся","млекопитающее",
-            "автомобиль","мотоцикл","велосипед","самолет","поезд","корабль",
-            "молоко","хлеб","сыр","мясо","рыба","овощи","фрукты",
-            "деньги","карта","кошелек","банкомат",
-            "учебник","ручка","карандаш","тетрадь", "стоял", "строил", "делал", "ушел", "в", "кроме", "если", "только потому", "там", "увидел", "дала", "ушла",
-            "добрый", "быстро", "смело", "сильно", "ходил", "раздал","конь", "утка", "телефон", "вроде", "показалось", "над", "под"
-        )
-        var randomTitle = ""
-        for(i in 0..Random.nextInt(4)) {
-            if (i == 0) {
-                randomTitle += "${words.random()
-                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }} "
-            } else {
-                randomTitle += "${words.random()} "
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
+    private fun getDreamsCollection(): CollectionReference {
+        return db.collection("users/${auth.currentUser!!.uid}/dreams")
+    }
+    suspend fun getDreams() : DataOrException<List<Dream>, Boolean, Exception> {
+        val dataOrException = DataOrException<List<Dream>, Boolean, Exception>()
+
+        try {
+            dataOrException.loading = true
+
+            dataOrException.data = getDreamsCollection().get().await().documents.map { documentSnapshot ->
+                documentSnapshot.toObject(Dream::class.java)!!
             }
-        }
+            if (!dataOrException.data.isNullOrEmpty()) dataOrException.loading = false
 
-        var randomDescription = ""
-        val randomTags = mutableListOf<Tag>()
-        for(i in 0..Random.nextInt(100)) {
-            randomDescription += "${words.random()} "
+        } catch (exc: FirebaseFirestoreException) {
+            dataOrException.e = exc
         }
+        return dataOrException
+    }
 
-        when (val randomNum = Random.nextInt(4)) {
-            0 -> {}
-            else -> {
-                for (i in 1..randomNum) {
-                    randomTags+=Tag(words.random())
+    suspend fun getDreamById(dreamId: String) : DataOrException<Dream, Boolean, Exception> {
+        val dataOrException = DataOrException<Dream, Boolean, Exception>()
+
+        try {
+            dataOrException.loading = true
+
+            dataOrException.data = getDreamsCollection().document(dreamId).get().await().toObject(Dream::class.java)
+            if (dataOrException.data != null) dataOrException.loading = false
+
+        } catch (exc: FirebaseFirestoreException) {
+            dataOrException.e = exc
+        }
+        return dataOrException
+    }
+
+    fun addDream(dream: Dream) {
+        val dreamMap = hashMapOf(
+            "id" to dream.id,
+            "title" to dream.title,
+            "description" to dream.description,
+            "date" to dream.date,
+            "time" to dream.time,
+            "mood" to dream.mood,
+            "lucidity" to dream.lucidity,
+            "tags" to dream.tags
+        ).toMap()
+        getDreamsCollection()
+            .document(dream.id)
+            .set(dreamMap)
+            .addOnSuccessListener { Log.d("TAG", "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.w("TAG", "Error writing document", e) }
+    }
+    fun deleteDreamById(dreamId: String) {
+        getDreamsCollection()
+            .document(dreamId)
+            .delete()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("TAG", "Success deleting dream $dreamId")
                 }
             }
-        }
-        for(i in 0..Random.nextInt(3)) {
-            randomDescription += "${words.random()} "
-        }
-        return Dream(
-            id = "0",
-            title = randomTitle,
-            description = randomDescription,
-            tags = randomTags
-        )
     }
-    fun getDreams(): List<Dream> {
-        val randomNum = Random.nextInt(1, 2)
-        val dreams = mutableListOf<Dream>()
-        for (i in 1..randomNum) {
-            dreams+=generateDream()
-        }
-        return dreams.toList()
+
+    fun updateDream(dream: Dream) {
+        val dreamToUpdate = hashMapOf(
+           // "id" to dream.id,
+            "title" to dream.title,
+            "description" to dream.description,
+            "date" to dream.date,
+            "time" to dream.time,
+            "mood" to dream.mood,
+            "lucidity" to dream.lucidity,
+            "tags" to dream.tags
+        ).toMap()
+
+        getDreamsCollection()
+            .document(dream.id)
+            .update(dreamToUpdate)
+            .addOnCompleteListener {
+                Log.d("TAG", "Success updating dream $dream")
+
+            }.addOnFailureListener{ exception ->
+                Log.w("TAG", "Error updating document" , exception)
+            }
     }
+
 }

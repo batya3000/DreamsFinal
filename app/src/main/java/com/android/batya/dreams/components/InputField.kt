@@ -29,11 +29,13 @@ fun InputField(
     modifier: Modifier = Modifier,
     valueState: MutableState<String>,
     placeholder: String = "",
+    labelId: String = "",
     enabled: Boolean = true,
     isSingleLine: Boolean = true,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Next,
     onAction: KeyboardActions = KeyboardActions.Default,
+    onValueChanged: (String) -> Unit = {},
     onClick: () -> Unit = {},
 ) {
 
@@ -45,7 +47,11 @@ fun InputField(
             },
         shape = RoundedCornerShape(7.dp),
         value = valueState.value,
-        onValueChange = { valueState.value = it},
+        onValueChange = {
+            valueState.value = it
+            onValueChanged(it)
+        },
+        //label = { if (labelId != "") Text(text = labelId) },
         placeholder = {
             Text(
                 text = placeholder,
