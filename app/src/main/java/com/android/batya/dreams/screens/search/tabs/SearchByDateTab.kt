@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,7 +19,6 @@ import androidx.navigation.NavController
 import com.android.batya.dreams.R
 import com.android.batya.dreams.model.Dream
 import com.android.batya.dreams.navigation.DreamScreens
-import com.android.batya.dreams.screens.search.SearchScreenViewModel
 import com.android.batya.dreams.ui.theme.BottomBarBackgroundColor
 import com.android.batya.dreams.ui.theme.CardBackgroundColor
 import com.android.batya.dreams.ui.theme.DateTimeTextColor
@@ -37,7 +35,6 @@ fun SearchByDateTab(dreams: List<Dream>, navController: NavController) {
     var filteredDreams by remember {
         mutableStateOf(dreams)
     }
-    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -106,14 +103,9 @@ fun SearchByDateTab(dreams: List<Dream>, navController: NavController) {
             }
             itemsIndexed(filteredDreams.sortedWith(compareBy(Dream::date, Dream::time)).reversed()) { _, dream ->
                 DreamItem(dream = dream) {
-                    // onClick
                     navController.navigate(
                         DreamScreens.Details.passDreamId(dream.id)
-                    ) {
-                        //popUpTo(navController.graph.findStartDestination().id) {
-                        //}
-                        //launchSingleTop = true
-                    }
+                    )
                     Log.d("TAG", "SearchByDate: opened ${dream.id}")
                 }
             }

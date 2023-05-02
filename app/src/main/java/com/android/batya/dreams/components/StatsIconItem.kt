@@ -14,16 +14,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.batya.dreams.ui.theme.CardBackgroundColor
+import com.android.batya.dreams.ui.theme.CardDarkerBackgroundColor
 
 @Composable
-fun IconCard(
+fun StatsIconItem(
     modifier: Modifier = Modifier,
     title: String,
+    number: Int,
     icon: Int,
-    iconSize: Dp = 23.dp,
-    fontWeight: FontWeight = FontWeight.Normal,
-    cardBackgroundColor: Color = CardBackgroundColor
+    iconSize: Dp = 22.dp,
+    cardBackgroundColor: Color = CardDarkerBackgroundColor
 ) {
     Card(
         modifier = modifier
@@ -34,28 +34,40 @@ fun IconCard(
         elevation = 0.dp
     ) {
         Row(
-            modifier = modifier.padding(
-                start = 14.dp,
-                end = 14.dp,
-                top = 4.dp,
-                bottom = 4.dp
+            modifier = Modifier.padding(
+                start = 10.dp,
+                end = 10.dp,
+                top = 3.dp,
+                bottom = 3.dp
             ),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            Text(
-                text = title,
-                fontSize = 14.sp,
-                color = Color.White,
-                fontWeight = fontWeight
-            )
-
             Image(
-                modifier = modifier.size(iconSize),
+                modifier = Modifier.size(iconSize),
                 painter = painterResource(id = icon),
                 contentDescription = "Button Icon",
             )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = title,
+                color = Color.White.copy(0.9f),
+                fontWeight = FontWeight.Light,
+                fontSize = 14.sp
+            )
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Text(
+                    text = number.toString(),
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp
+                )
+            }
         }
 
     }

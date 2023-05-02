@@ -24,9 +24,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import com.android.batya.dreams.components.ChipGroup
-import com.android.batya.dreams.components.IconCard
 import com.android.batya.dreams.R
+import com.android.batya.dreams.components.IconCard
+import com.android.batya.dreams.components.chips.ChipGroup
 import com.android.batya.dreams.model.Dream
 import com.android.batya.dreams.model.Lucidity
 import com.android.batya.dreams.model.Mood
@@ -95,7 +95,7 @@ fun DreamDetailsScreen(
                         fontWeight = FontWeight.Bold,
                         color = Color.White.copy(alpha = 0.9f)
                     )
-                    Box() {
+                    Box {
                         IconButton(onClick = { menuExpanded = !menuExpanded }) {
                             Icon(
                                 modifier = Modifier.size(22.dp),
@@ -174,7 +174,7 @@ fun DreamDetailsScreen(
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     modifier = Modifier,
-                    text = "${dream.description.repeat(1)}",
+                    text = dream.description,
                     fontSize = 13.sp,
                     overflow = TextOverflow.Ellipsis,
                     color = Color.White
@@ -187,7 +187,7 @@ fun DreamDetailsScreen(
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
-            Column() {
+            Column {
                 if (dream.tags.isNotEmpty()) {
                     Card(
                         modifier = Modifier

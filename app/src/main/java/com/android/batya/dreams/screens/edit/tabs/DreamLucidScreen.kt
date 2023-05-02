@@ -1,7 +1,6 @@
 package com.android.batya.dreams.screens.edit
 
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -83,9 +82,9 @@ fun LucidScreenContent(dream: Dream, viewModel: EditDreamViewModel, onSave: () -
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     TranslucentButton(
-                        text = stringResource(R.string.save_button)
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.save_button),
                     ) {
-                        Log.d("TAG", "adding ${dream.id}")
                         onSave()
                     }
                 }

@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.batya.dreams.components.ChipGroup
+import com.android.batya.dreams.components.chips.ChipGroup
 import com.android.batya.dreams.model.Dream
 import com.android.batya.dreams.model.Tag
 import com.android.batya.dreams.ui.theme.BorderColor

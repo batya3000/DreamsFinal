@@ -1,7 +1,6 @@
 package com.android.batya.dreams.screens.search.tabs
 
 import DreamItem
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,12 +18,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.android.batya.dreams.R
-import com.android.batya.dreams.components.FilterChip
+import com.android.batya.dreams.components.chips.FilterChip
 import com.android.batya.dreams.model.Dream
-import com.android.batya.dreams.model.Mood
 import com.android.batya.dreams.model.buttons.MoodItemModel
 import com.android.batya.dreams.navigation.DreamScreens
-import com.android.batya.dreams.screens.search.SearchScreenViewModel
 
 @Composable
 fun SearchByMoodTab(dreams: List<Dream>, navController: NavController) {
@@ -92,7 +89,7 @@ fun SearchByMoodTab(dreams: List<Dream>, navController: NavController) {
         }
 
         filteredDreams = dreams.filter { dream ->
-            getTitleFromMood(dream.mood, context) in selectedChips
+            dream.mood.title in selectedChips
         }
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -126,17 +123,5 @@ fun SearchByMoodTab(dreams: List<Dream>, navController: NavController) {
                 }
             }
         }
-    }
-}
-
-fun getTitleFromMood(mood: Mood, context: Context): String {
-    return when(mood) {
-        Mood.BORED -> context.getString(R.string.mood_title_bored)
-        Mood.HORROR -> context.getString(R.string.mood_title_horror)
-        Mood.BAD -> context.getString(R.string.mood_title_bad)
-        Mood.NORMAL -> context.getString(R.string.mood_title_normal)
-        Mood.GOOD -> context.getString(R.string.mood_title_good)
-        Mood.BREATHTAKING -> context.getString(R.string.mood_title_breathtaking)
-        else -> context.getString(R.string.title_not_selected)
     }
 }

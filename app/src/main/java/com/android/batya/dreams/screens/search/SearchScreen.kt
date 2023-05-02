@@ -18,8 +18,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.android.batya.dreams.components.InputField
+import com.android.batya.dreams.components.NoDreamsBanner
 import com.android.batya.dreams.model.Dream
 import com.android.batya.dreams.navigation.DreamScreens
+import com.android.batya.dreams.screens.journal.JournalScreenViewModel
 import com.android.batya.dreams.screens.search.tabs.SearchByDateTab
 import com.android.batya.dreams.screens.search.tabs.SearchByLucidTab
 import com.android.batya.dreams.screens.search.tabs.SearchByMoodTab
@@ -27,7 +29,7 @@ import com.android.batya.dreams.ui.theme.TabUnselectedIconColor
 import kotlinx.coroutines.launch
 
 @Composable
-fun SearchScreen(viewModel: SearchScreenViewModel, navController: NavController) {
+fun SearchScreen(viewModel: JournalScreenViewModel, navController: NavController) {
 
 
     var listOfDreams = emptyList<Dream>()
@@ -41,12 +43,9 @@ fun SearchScreen(viewModel: SearchScreenViewModel, navController: NavController)
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().padding(bottom = 53.dp)
         ) {
-            Text(
-                text = "Loading...",
-                color = Color.White
-            )
+            NoDreamsBanner()
         }
     } else {
         Column(
@@ -58,8 +57,8 @@ fun SearchScreen(viewModel: SearchScreenViewModel, navController: NavController)
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        start = 35.dp,
-                        end = 35.dp,
+                        start = 20.dp,
+                        end = 20.dp,
                         top = 30.dp,
                         bottom = 0.dp
                     ),

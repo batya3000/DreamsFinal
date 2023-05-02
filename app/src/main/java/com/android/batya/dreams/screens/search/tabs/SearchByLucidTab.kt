@@ -1,7 +1,6 @@
 package com.android.batya.dreams.screens.search.tabs
 
 import DreamItem
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,12 +18,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.android.batya.dreams.R
-import com.android.batya.dreams.components.FilterChip
+import com.android.batya.dreams.components.chips.FilterChip
 import com.android.batya.dreams.model.Dream
-import com.android.batya.dreams.model.Lucidity
 import com.android.batya.dreams.model.buttons.LucidItemModel
 import com.android.batya.dreams.navigation.DreamScreens
-import com.android.batya.dreams.screens.search.SearchScreenViewModel
 
 @Composable
 fun SearchByLucidTab(dreams: List<Dream>, navController: NavController) {
@@ -89,7 +86,7 @@ fun SearchByLucidTab(dreams: List<Dream>, navController: NavController) {
         }
         Log.d("TAG", "SearchByLucidTab: ${selectedChips.toList()}")
         filteredDreams = dreams.filter { dream ->
-            getTitleFromLucidity(dream.lucidity, context) in selectedChips
+            dream.lucidity.title in selectedChips
         }
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -123,13 +120,5 @@ fun SearchByLucidTab(dreams: List<Dream>, navController: NavController) {
                 }
             }
         }
-    }
-}
-
-fun getTitleFromLucidity(lucidity: Lucidity, context: Context): String {
-    return when(lucidity) {
-        Lucidity.LUCID -> context.getString(R.string.lucid_title)
-        Lucidity.NOT_LUCID -> context.getString(R.string.not_lucid_title)
-        else -> context.getString(R.string.title_not_selected)
     }
 }

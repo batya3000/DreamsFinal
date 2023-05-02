@@ -25,8 +25,8 @@ import com.android.batya.dreams.screens.signin.SignInScreen
 import com.android.batya.dreams.screens.profile.ProfileScreen
 import com.android.batya.dreams.screens.search.SearchByQueryScreen
 import com.android.batya.dreams.screens.search.SearchScreen
-import com.android.batya.dreams.screens.search.SearchScreenViewModel
 import com.android.batya.dreams.screens.stats.StatisticsScreen
+import com.android.batya.dreams.screens.stats.StatsScreenViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -74,12 +74,14 @@ fun DreamNavigation(
             JournalScreen(navController = navController, viewModel = journalScreenViewModel)
         }
         composable(route = DreamScreens.Statistics.route) {
-            StatisticsScreen()
+            val viewModel: StatsScreenViewModel = hiltViewModel()
+
+            StatisticsScreen(viewModel = viewModel, navController = navController)
         }
         composable(route = DreamScreens.Search.route) {
-            val searchScreenViewModel: SearchScreenViewModel = hiltViewModel()
+            val viewModel: JournalScreenViewModel = hiltViewModel()
 
-            SearchScreen(searchScreenViewModel, navController)
+            SearchScreen(viewModel, navController)
         }
 
         composable(
@@ -91,10 +93,10 @@ fun DreamNavigation(
                 },
             )
         ) {
-            val searchScreenViewModel: SearchScreenViewModel = hiltViewModel()
+            val viewModel: JournalScreenViewModel = hiltViewModel()
 
             SearchByQueryScreen(
-                viewModel = searchScreenViewModel,
+                viewModel = viewModel,
                 query = it.arguments?.getString(SEARCH_QUERY_ARGUMENT_KEY).toString(),
                 navController = navController
             )

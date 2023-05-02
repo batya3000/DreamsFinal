@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Dreams</string>
+    <string name="app_name">Dream Journal</string>
     <string name="web_client_id">573625645298-9i61h5dkdu2q5ktcf0k950jn3d9r7vji.apps.googleusercontent.com</string>
     <string name="edit_dream_date">Date</string>
     <string name="edit_dream_time">Time</string>
@@ -33,5 +33,6 @@
     <string name="search_no_dreams_mood">No dreams recorded for this mood</string>
     <string name="search_no_dreams_text">No dreams recorded for this text</string>
     <string name="search_no_dreams_lucidity">No dreams recorded for this filter</string>
-
+    <string name="sign_in_welcome">Welcome!</string>
+    <string name="sign_in_text">Before using the application, you must be logged into your Google account in order to be able to save dreams.</string>
 </resources>

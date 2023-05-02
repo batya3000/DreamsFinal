@@ -11,7 +11,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import com.android.batya.dreams.screens.search.SearchScreenViewModel
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -20,9 +19,6 @@ fun SearchForm(
     modifier: Modifier = Modifier,
     placeholder: String = "",
     valueState: MutableState<String> = mutableStateOf(""),
-    viewModel: SearchScreenViewModel,
-    loading: Boolean = false,
-    hint: String = "Search",
     onClick: () -> Unit = {},
     onSearch: (String) -> Unit = {},
 

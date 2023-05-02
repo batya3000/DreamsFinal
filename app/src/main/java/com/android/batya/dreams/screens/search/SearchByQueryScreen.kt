@@ -25,10 +25,11 @@ import com.android.batya.dreams.R
 import com.android.batya.dreams.components.SearchForm
 import com.android.batya.dreams.model.Dream
 import com.android.batya.dreams.navigation.DreamScreens
+import com.android.batya.dreams.screens.journal.JournalScreenViewModel
 
 @Composable
 fun SearchByQueryScreen(
-    viewModel: SearchScreenViewModel,
+    viewModel: JournalScreenViewModel,
     query: String = "",
     navController: NavHostController
 ) {
@@ -61,8 +62,8 @@ fun SearchByQueryScreen(
         if (query != "") {
             filteredDreams = dreams.filter { dream ->
                 query in dream.title.lowercase() ||
-                        query in dream.description.lowercase() ||
-                        query in dream.tags.map { it.title }
+                query in dream.description.lowercase() ||
+                query in dream.tags.map { it.title }
             }
         }
 
@@ -97,16 +98,15 @@ fun SearchByQueryScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
-                            end = 25.dp,
+                            end = 10.dp,
                             bottom = 0.dp
                         )
                         .focusRequester(focusRequester)
                         .onGloballyPositioned {
-                            focusRequester.requestFocus() // IMPORTANT
+                            if (query == "") focusRequester.requestFocus()
                         },
                     placeholder = "Search dream",
                     valueState = queryState,
-                    viewModel = viewModel
                 ) { query ->
                     filteredDreams = dreams.filter { dream ->
                         query in dream.title.lowercase() ||
@@ -117,7 +117,7 @@ fun SearchByQueryScreen(
             }
 
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(35.dp))
 
             if (filteredDreams.isEmpty()) {
                 Text(
